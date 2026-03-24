@@ -20,7 +20,7 @@ jobs:
 
           errors=0
 
-          git log origin/${{ github.base_ref }}..HEAD --no-merges --pretty=format:"%h|%s" | while IFS="|" read hash commit; do
+          while IFS="|" read -r hash commit; do
             echo "----------------------------------------"
             echo "Checking commit: $hash"
             echo "$commit"
@@ -31,15 +31,17 @@ jobs:
               echo "Commit ID: $hash"
               echo "Message: $commit"
               echo ""
-              errors=$((errors+1))
+              ((errors++))  
             else
               echo "✅ Valid"
             fi
-          done
+
+          done < <(git log origin/${{ github.base_ref }}..HEAD --no-merges --pretty=format:"%h|%s")
 
           echo "----------------------------------------"
+          echo "Total errors: $errors"
 
-          if [ $errors -ne 0 ]; then
+          if (( errors > 0 )); then
             echo "❌ Found $errors invalid commit(s)"
             exit 1
           else
