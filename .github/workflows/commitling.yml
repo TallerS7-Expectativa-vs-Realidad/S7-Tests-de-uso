@@ -31,7 +31,7 @@ jobs:
               echo "Commit ID: $hash"
               echo "Message: $commit"
               echo ""
-              ((errors++))  
+              errors=$((errors + 1))
             else
               echo "✅ Valid"
             fi
